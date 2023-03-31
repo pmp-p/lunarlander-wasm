@@ -620,22 +620,17 @@ class LunarLander(gym.Env, EzPickle):
             )
             return
 
-        try:
-            import pygame
-            from pygame import gfxdraw
-        except ImportError as e:
-            raise DependencyNotInstalled(
-                "pygame is not installed, run `pip install gymnasium[box2d]`"
-            ) from e
-
         if self.screen is None and self.render_mode == "human":
-            pygame.init()
-            pygame.display.init()
-            self.screen = pygame.display.set_mode((VIEWPORT_W, VIEWPORT_H))
+            #pygame.display.init()
+            ...
+        import pygame
+        import pygame.gfxdraw as gfxdraw
+
         if self.clock is None:
             self.clock = pygame.time.Clock()
-
-        self.surf = pygame.Surface((VIEWPORT_W, VIEWPORT_H))
+            self.screen = pygame.display.set_mode((VIEWPORT_W, VIEWPORT_H))
+            self.surf = self.screen
+        print("SCREEN:",self.render_mode,self.surf)
 
         pygame.transform.scale(self.surf, (SCALE, SCALE))
         pygame.draw.rect(self.surf, (255, 255, 255), self.surf.get_rect())
@@ -660,7 +655,8 @@ class LunarLander(gym.Env, EzPickle):
             for coord in p:
                 scaled_poly.append((coord[0] * SCALE, coord[1] * SCALE))
             pygame.draw.polygon(self.surf, (0, 0, 0), scaled_poly)
-            gfxdraw.aapolygon(self.surf, scaled_poly, (0, 0, 0))
+            #gfxdraw.aapolygon(self.surf, scaled_poly, (0, 0, 0))
+            #gfxdraw.filled_polygon(self.surf, scaled_poly, (0, 0, 0))
 
         for obj in self.particles + self.drawlist:
             for f in obj.fixtures:
@@ -682,7 +678,7 @@ class LunarLander(gym.Env, EzPickle):
                 else:
                     path = [trans * v * SCALE for v in f.shape.vertices]
                     pygame.draw.polygon(self.surf, color=obj.color1, points=path)
-                    gfxdraw.aapolygon(self.surf, path, obj.color1)
+                    #gfxdraw.aapolygon(self.surf, path, obj.color1)
                     pygame.draw.aalines(
                         self.surf, color=obj.color2, points=path, closed=True
                     )
@@ -707,11 +703,11 @@ class LunarLander(gym.Env, EzPickle):
                             (x + 25, flagy2 - 5),
                         ],
                     )
-                    gfxdraw.aapolygon(
-                        self.surf,
-                        [(x, flagy2), (x, flagy2 - 10), (x + 25, flagy2 - 5)],
-                        (204, 204, 0),
-                    )
+#                    gfxdraw.aapolygon(
+#                        self.surf,
+#                        [(x, flagy2), (x, flagy2 - 10), (x + 25, flagy2 - 5)],
+#                        (204, 204, 0),
+#                    )
 
         self.surf = pygame.transform.flip(self.surf, False, True)
 

@@ -1,3 +1,4 @@
 pygame
 pygbag
 numpy
+Box2D
